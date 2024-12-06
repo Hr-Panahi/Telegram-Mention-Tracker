@@ -121,6 +121,9 @@ def main():
         handle_messages
     ))
 
+    # Start heartbeat task
+    application.loop.create_task(heartbeat(application))
+    
     # Start the bot
     application.run_polling(drop_pending_updates=True)
 
