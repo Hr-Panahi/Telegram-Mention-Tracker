@@ -71,11 +71,16 @@ Recommended platforms:
 - PythonAnywhere
 
 ### Render Deployment Steps
-1. Push your code to GitHub
-2. Connect your repository to Render
-3. Set environment variables in Render dashboard
-4. Choose Python runtime
-5. Deploy
+1. Create a GitHub repository for your bot.
+2. Push your code to GitHub if you haven’t already.
+3. Sign up on Render.com.
+4. Create a new Web Service on Render.
+5. Connect your GitHub repository to Render.
+6. Configure the build and start commands:
+  * Build Command: `pip install -r requirements.txt`
+  * Start Command: `python mention_tracker.py`
+7. Set up environment variables (e.g., BOT_TOKEN, YOUR_USERNAME, YOUR_CHANNEL_ID) in the Render dashboard under your service's settings.
+Render will automatically deploy your bot and keep it running, handling the environment setup and any future deployments when you push updates to your GitHub repository.
 
 ## 🔧 Customization
 
