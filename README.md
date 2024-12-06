@@ -61,7 +61,7 @@ YOUR_CHANNEL_ID=your_channel_username_or_id
 
 ### Local Development
 ```bash
-python bot_script.py
+python mention_tracker.py
 ```
 
 ### Online Deployment
@@ -84,7 +84,7 @@ Render will automatically deploy your bot and keep it running, handling the envi
 
 ## 🔧 Customization
 
-Modify `bot_script.py` to:
+Modify `mention_tracker.py` to:
 - Change mention detection logic
 - Add more sophisticated forwarding rules
 - Implement additional logging
@@ -101,10 +101,6 @@ Modify `bot_script.py` to:
 - Check environment variable configuration
 - Verify Telegram API token is valid
 - Review logs for error messages
-
-## 📝 License
-
-[Choose an appropriate license, e.g., MIT License]
 
 ## 🤝 Contributing
 
