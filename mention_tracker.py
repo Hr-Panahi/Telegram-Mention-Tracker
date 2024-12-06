@@ -101,6 +101,7 @@ async def heartbeat(application: Application):
     while True:
         # Simple task to keep the bot alive
         await asyncio.sleep(60)  # Ping every minute
+        logger.info("Heartbeat ping")
 
 def main():
     """Start the bot."""
@@ -115,7 +116,7 @@ def main():
     ))
 
     # Start heartbeat task
-    asyncio.create_task(heartbeat(application))
+    application.asyncio.create_task(heartbeat(application))
 
     # Start the bot
     application.run_polling(drop_pending_updates=True)
