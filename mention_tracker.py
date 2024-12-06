@@ -1,10 +1,20 @@
 import logging
 import os
 import re
+import threading
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from flask import Flask
 
+flask_app = Flask(__name__)
+
+@flask_app.route('/')
+def health_check():
+    return "Bot is running!", 200
+
+def run_flask_server():
+    flask_app.run(host='0.0.0.0', port=int(os.getenv('PORT', 10000)))
 load_dotenv('credentials.env')
 
 # Configure logging
@@ -97,6 +107,10 @@ async def handle_messages(update: Update, context):
 
 def main():
     """Start the bot."""
+    # Start Flask server in a separate thread
+    flask_thread = threading.Thread(target=run_flask_server)
+    flask_thread.start()
+    
     # Create the Application and pass it your bot's token
     application = Application.builder().token(BOT_TOKEN).build()
 
