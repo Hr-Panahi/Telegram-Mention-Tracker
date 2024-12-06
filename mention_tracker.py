@@ -15,7 +15,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Replace these with your actual values
+
 BOT_TOKEN = os.getenv('BOT_TOKEN')
 YOUR_USERNAME = os.getenv('YOUR_USERNAME')  # Without the @ symbol
 YOUR_CHANNEL_ID = os.getenv('YOUR_CHANNEL_ID')  # Can be username or channel ID
@@ -97,17 +97,10 @@ async def handle_messages(update: Update, context):
             logger.error(f"Error forwarding message: {e}")
 
 async def heartbeat(application: Application):
-    """Heartbeat function to keep the bot alive."""
+    """Implement heartbeat or ping to keep the bot alive"""
     while True:
-        try:
-            # Simple ping to Telegram API to keep the bot alive
-            await application.bot.get_me()  # This makes a call to the Telegram API to get bot info
-            logger.info("Heartbeat successful: Bot is alive")
-        except Exception as e:
-            logger.error(f"Error during heartbeat: {e}")
-        
-        # Wait for 5 minutes before the next ping
-        await asyncio.sleep(300)
+        # Simple task to keep the bot alive
+        await asyncio.sleep(60)  # Ping every minute
 
 def main():
     """Start the bot."""
@@ -122,8 +115,8 @@ def main():
     ))
 
     # Start heartbeat task
-    application.loop.create_task(heartbeat(application))
-    
+    asyncio.create_task(heartbeat(application))
+
     # Start the bot
     application.run_polling(drop_pending_updates=True)
 
