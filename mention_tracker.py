@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+import asyncio
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
@@ -94,6 +95,19 @@ async def handle_messages(update: Update, context):
             logger.info(f"Forwarded mention from {update.message.chat.title}")
         except Exception as e:
             logger.error(f"Error forwarding message: {e}")
+
+async def heartbeat(application: Application):
+    """Heartbeat function to keep the bot alive."""
+    while True:
+        try:
+            # Simple ping to Telegram API to keep the bot alive
+            await application.bot.get_me()  # This makes a call to the Telegram API to get bot info
+            logger.info("Heartbeat successful: Bot is alive")
+        except Exception as e:
+            logger.error(f"Error during heartbeat: {e}")
+        
+        # Wait for 5 minutes before the next ping
+        await asyncio.sleep(300)
 
 def main():
     """Start the bot."""
