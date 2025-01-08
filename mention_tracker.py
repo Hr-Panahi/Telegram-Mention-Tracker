@@ -1,9 +1,12 @@
 import logging
 import os
 import re
+import asyncio
+from datetime import datetime
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
+import aiohttp
 
 load_dotenv('credentials.env')
 
@@ -95,6 +98,33 @@ async def handle_messages(update: Update, context):
         except Exception as e:
             logger.error(f"Error forwarding message: {e}")
 
+async def heartbeat():
+    """
+    Periodic heartbeat function that keeps the application alive
+    by sending requests to itself every 10 minutes
+    """
+    while True:
+        try:
+            # Get the Render service URL from environment variable
+            render_url = os.getenv('RENDER_EXTERNAL_URL')
+            
+            if render_url:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(render_url) as response:
+                        logger.info(f"Heartbeat sent at {datetime.now()}, status: {response.status}")
+            else:
+                logger.info(f"Heartbeat tick at {datetime.now()}")
+                
+        except Exception as e:
+            logger.error(f"Error in heartbeat: {e}")
+        
+        # Wait for 10 minutes before next heartbeat
+        await asyncio.sleep(300)  # 600 seconds = 10 minutes
+
+async def start_heartbeat(application):
+    """Start the heartbeat coroutine"""
+    application.heartbeat_task = asyncio.create_task(heartbeat())
+
 def main():
     """Start the bot."""
     # Create the Application and pass it your bot's token
@@ -106,6 +136,9 @@ def main():
         filters.TEXT & ~filters.COMMAND, 
         handle_messages
     ))
+
+    # Start the heartbeat
+    asyncio.create_task(heartbeat())
 
     # Start the bot
     application.run_polling(drop_pending_updates=True)
