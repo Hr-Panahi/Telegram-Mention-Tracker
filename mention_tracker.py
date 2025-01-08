@@ -101,7 +101,7 @@ async def handle_messages(update: Update, context):
 async def heartbeat():
     """
     Periodic heartbeat function that keeps the application alive
-    by sending requests to itself every 10 minutes
+    by sending requests to itself every 5 minutes
     """
     while True:
         try:
@@ -118,15 +118,11 @@ async def heartbeat():
         except Exception as e:
             logger.error(f"Error in heartbeat: {e}")
         
-        # Wait for 10 minutes before next heartbeat
-        await asyncio.sleep(300)  # 600 seconds = 10 minutes
+        # Wait for 5 minutes before next heartbeat
+        await asyncio.sleep(300)  # 300 seconds = 5 minutes
 
-async def start_heartbeat(application):
-    """Start the heartbeat coroutine"""
-    application.heartbeat_task = asyncio.create_task(heartbeat())
-
-def main():
-    """Start the bot."""
+async def run_bot():
+    """Run the bot and heartbeat together"""
     # Create the Application and pass it your bot's token
     application = Application.builder().token(BOT_TOKEN).build()
 
@@ -137,11 +133,17 @@ def main():
         handle_messages
     ))
 
-    # Start the heartbeat
-    asyncio.create_task(heartbeat())
+    # Start both the bot and heartbeat
+    async with application:
+        # Start the heartbeat task
+        asyncio.create_task(heartbeat())
+        # Start polling
+        await application.run_polling(drop_pending_updates=True)
 
-    # Start the bot
-    application.run_polling(drop_pending_updates=True)
+def main():
+    """Start the bot."""
+    # Run the bot and heartbeat in the event loop
+    asyncio.run(run_bot())
 
 if __name__ == '__main__':
     main()
